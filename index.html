@@ -112,9 +112,9 @@ select{background:var(--bg);border:1px solid var(--line);border-radius:8px;paddi
   <div class="wkstrip" id="strip"></div>
   <div class="tabs" id="tabs"></div>
   <div id="body"></div>
-  <details style="margin-top:24px"><summary>Backup &amp; restore</summary><div><p class="last">Create a backup to copy your data somewhere safe, or to move it to another copy of the app. To restore, paste a backup below and tap Restore. Restoring replaces what is currently saved.</p>
+  <details style="margin-top:24px"><summary>Backup &amp; restore</summary><div><p class="last">Export data downloads everything as a file (use this for the monthly report). Create backup copies your data as text so you can store it somewhere safe, or to move it to another copy of the app. To restore, paste a backup below and tap Restore. Restoring replaces what is currently saved.</p>
   <textarea id="bkt" rows="4" aria-label="Backup text" placeholder="Your backup appears here, or paste one to restore"></textarea>
-  <div class="add" style="margin-top:8px"><button data-a="bkmake">Create backup</button><button data-a="bkrestore">Restore</button></div></div></details>
+  <div class="add" style="margin-top:8px"><button data-a="bkfile">Export data</button><button data-a="bkmake">Create backup</button><button data-a="bkrestore">Restore</button></div></div></details>
 </main>
 <script>
 const DEF=[["Chest",["Bench Press","Dumbbell Press","Cable Flys"]],["Shoulders",["Overhead Press","Dumbbell Lateral Raise","Face Pull"]],["Lats",["Lat Pulldown","One Arm Row"]],["Traps",["Shrugs","Barbell Row","Neutral Grip Row"]],["Glutes",["Hip Extensions"]],["Biceps",["Barbell Curl","Reverse Barbell Curl","Dumbbell Preacher Curl"]],["Forearms",["Dumbbell Wrist Curl"]],["Triceps",["Overhead Tricep Extension","Cable Kickback"]],["Abs",["Abs"]],["Legs",["Squat","Leg Press","Leg Extension","Leg Curl","Romanian Deadlift","Calf Raise"]]].map(([name,ex])=>({name,ex}));
@@ -331,6 +331,7 @@ document.addEventListener("click",e=>{
   else if(a==="undo"){if(lastDel){S.meta.foods.splice(lastDel.i,0,lastDel.f);lastDel=null;touch("meta");$("#toast").hidden=true}}
   else if(a==="addfood"){const n=$("#fn").value.trim();if(!n)return;const m={kcal:$("#fk").value,p:$("#fp").value,c:$("#fcb").value,f:$("#ff").value};(S.meta.foods=S.meta.foods||[]).push({n,kcal:eff(m),p:+m.p||0,c:+m.c||0,f:+m.f||0});touch("meta")}
   else if(a==="savefood"){const m=d.m[+D.i],n=(m.food||m.name||"").trim();if(!n)return;(S.meta.foods=S.meta.foods||[]).push({n,kcal:eff(m),p:+m.p||0,c:+m.c||0,f:+m.f||0});touch("meta")}
+  else if(a==="bkfile"){try{const blob=new Blob([JSON.stringify({app:"four-pillars",exported:new Date().toISOString(),S},null,1)],{type:"application/json"});const u=URL.createObjectURL(blob);const l=document.createElement("a");l.href=u;l.download="four-pillars-"+iso(new Date())+".json";document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);toast("Data exported. Check your Downloads.")}catch(e){toast("Export failed. Use Create backup instead.")}}
   else if(a==="bkmake"){const t=$("#bkt");t.value=JSON.stringify({app:"four-pillars",S});t.select();const m="Backup created. Select all and copy it.";try{navigator.clipboard.writeText(t.value).then(()=>toast("Backup copied. Paste it somewhere safe."),()=>toast(m))}catch(e){toast(m)}}
   else if(a==="bkrestore"){try{const j=JSON.parse($("#bkt").value).S;if(!j||!j.days||!j.meta)throw 0;S.days=j.days;Object.assign(S.meta,j.meta,{v:j.meta.v||0});migrate();Object.keys(S.days).forEach(k=>dirty.add(k));dirty.add("meta");saveDirty();try{localStorage.setItem("fp_tracker",JSON.stringify(S))}catch(e){}flush();toast("Backup restored")}catch(e){toast("That doesn't look like a valid backup")}}
   else if(a==="delp"){const w=plan(d);w.items.splice(+D.i,1);touch(w.c?cur:"meta")}
