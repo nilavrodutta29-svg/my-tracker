@@ -8,7 +8,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Four Pillars Tracker</title>
+<title>Gain Tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -107,7 +107,7 @@ select{background:var(--bg);border:1px solid var(--line);border-radius:8px;paddi
 <body>
 <main>
   <div id="toast" role="status" aria-live="polite" hidden></div>
-  <div class="top"><h1>The Four Pillars <small class="stat" style="font:500 12px Barlow,system-ui,sans-serif">v12</small></h1><div style="display:flex;align-items:center;gap:10px"><span class="stat" id="stat"></span><button id="calbtn" class="sm" data-a="tab" data-v="cal">Calendar</button></div></div>
+  <div class="top"><h1>Gain Tracker <small class="stat" style="font:500 12px Barlow,system-ui,sans-serif">v12</small></h1><div style="display:flex;align-items:center;gap:10px"><span class="stat" id="stat"></span><button id="calbtn" class="sm" data-a="tab" data-v="cal">Calendar</button></div></div>
   <div class="dn"><button data-a="prev" aria-label="Previous day">‹</button><b id="dl"></b><button data-a="next" aria-label="Next day">›</button><button data-a="today" class="sm">Today</button></div>
   <div class="wkstrip" id="strip"></div>
   <div class="tabs" id="tabs"></div>
@@ -331,7 +331,7 @@ document.addEventListener("click",e=>{
   else if(a==="undo"){if(lastDel){S.meta.foods.splice(lastDel.i,0,lastDel.f);lastDel=null;touch("meta");$("#toast").hidden=true}}
   else if(a==="addfood"){const n=$("#fn").value.trim();if(!n)return;const m={kcal:$("#fk").value,p:$("#fp").value,c:$("#fcb").value,f:$("#ff").value};(S.meta.foods=S.meta.foods||[]).push({n,kcal:eff(m),p:+m.p||0,c:+m.c||0,f:+m.f||0});touch("meta")}
   else if(a==="savefood"){const m=d.m[+D.i],n=(m.food||m.name||"").trim();if(!n)return;(S.meta.foods=S.meta.foods||[]).push({n,kcal:eff(m),p:+m.p||0,c:+m.c||0,f:+m.f||0});touch("meta")}
-  else if(a==="bkfile"){try{const blob=new Blob([JSON.stringify({app:"four-pillars",exported:new Date().toISOString(),S},null,1)],{type:"application/json"});const u=URL.createObjectURL(blob);const l=document.createElement("a");l.href=u;l.download="four-pillars-"+iso(new Date())+".json";document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);toast("Data exported. Check your Downloads.")}catch(e){toast("Export failed. Use Create backup instead.")}}
+  else if(a==="bkfile"){try{const blob=new Blob([JSON.stringify({app:"four-pillars",exported:new Date().toISOString(),S},null,1)],{type:"application/json"});const u=URL.createObjectURL(blob);const l=document.createElement("a");l.href=u;l.download="gain-tracker-"+iso(new Date())+".json";document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);toast("Data exported. Check your Downloads.")}catch(e){toast("Export failed. Use Create backup instead.")}}
   else if(a==="bkmake"){const t=$("#bkt");t.value=JSON.stringify({app:"four-pillars",S});t.select();const m="Backup created. Select all and copy it.";try{navigator.clipboard.writeText(t.value).then(()=>toast("Backup copied. Paste it somewhere safe."),()=>toast(m))}catch(e){toast(m)}}
   else if(a==="bkrestore"){try{const j=JSON.parse($("#bkt").value).S;if(!j||!j.days||!j.meta)throw 0;S.days=j.days;Object.assign(S.meta,j.meta,{v:j.meta.v||0});migrate();Object.keys(S.days).forEach(k=>dirty.add(k));dirty.add("meta");saveDirty();try{localStorage.setItem("fp_tracker",JSON.stringify(S))}catch(e){}flush();toast("Backup restored")}catch(e){toast("That doesn't look like a valid backup")}}
   else if(a==="delp"){const w=plan(d);w.items.splice(+D.i,1);touch(w.c?cur:"meta")}
